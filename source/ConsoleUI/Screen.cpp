@@ -23,7 +23,7 @@ std::shared_ptr<Button> Screen::addButton(const std::string& initial, screen_pos
     m_elements.push_back(std::static_pointer_cast<Element>(elemPtr));
     m_buttons.push_back(elemPtr);
     m_buttons.sort([](const std::shared_ptr<Button>& one, const std::shared_ptr<Button>& two) -> bool {
-        return *two < *one;
+        return *one < *two;
     });
     if(m_buttons.size() == 1) {
         m_buttonChoice = m_buttons.begin();
@@ -86,42 +86,41 @@ void Screen::handleInput(int input)
 {
     if(m_buttons.size() > 0) {
         std::list<std::shared_ptr<Button>>::iterator btnIterator = m_buttonChoice;
-        bool looped = true;
         screen_pos currentStart = (*m_buttonChoice)->m_drawInfo.newStart;
 
         if(input & BUTTON_UP) {
             while(btnIterator != m_buttons.begin()) {
                 --btnIterator;
-                if((*btnIterator)->m_drawInfo.newStart.y < currentStart.y) {
+                if((*btnIterator)->m_drawInfo.newStart.y < currentStart.y &&
+                    (*btnIterator)->m_drawInfo.newVisible) {
                     selectButton(btnIterator);
-                    looped = false;
+                    break;
                 }
-            }
-            if(looped) {
-                selectButton(--m_buttons.end());
             }
         } else if(input & BUTTON_DOWN) {
             while(btnIterator != --m_buttons.end()) {
                 ++btnIterator;
-                if((*btnIterator)->m_drawInfo.newStart.y > currentStart.y) {
+                if((*btnIterator)->m_drawInfo.newStart.y > currentStart.y &&
+                    (*btnIterator)->m_drawInfo.newVisible) {
                     selectButton(btnIterator);
-                    looped = false;
+                    break;
                 }
             }
-            if(looped) {
-                selectButton(m_buttons.begin());
-            }
         } else if(input & BUTTON_LEFT) {
-            if(btnIterator != m_buttons.begin()) {
-                selectButton(--btnIterator);
-            } else {
-                selectButton(--m_buttons.end());
+            while(btnIterator != m_buttons.begin()) {
+                --btnIterator;
+                if((*btnIterator)->m_drawInfo.newVisible) {
+                    selectButton(btnIterator);
+                    break;
+                }
             }
         } else if(input & BUTTON_RIGHT) {
-            if(btnIterator != --m_buttons.end()) {
-                selectButton(++btnIterator);
-            } else {
-                selectButton(m_buttons.begin());
+            while(btnIterator != --m_buttons.end()) {
+                ++btnIterator;
+                if((*btnIterator)->m_drawInfo.newVisible) {
+                    selectButton(btnIterator);
+                    break;
+                }
             }
         }
 

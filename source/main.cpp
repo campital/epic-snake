@@ -41,26 +41,24 @@ int main(int argc, char **argv) {
     });
     
     while(1) {
-        if(timer % 5 == 0) {
-            WPAD_ScanPads();
-            u32 pressed = WPAD_ButtonsDown(0);
-            if (pressed & WPAD_BUTTON_HOME) {
-                exit(0);
-            }
-            if(gameStarted) {
-                if(pressed & WPAD_BUTTON_UP) {
-                    snake.setDirection(SnakeDirection::UP);
-                } else if(pressed & WPAD_BUTTON_DOWN) {
-                    snake.setDirection(SnakeDirection::DOWN);
-                } else if(pressed & WPAD_BUTTON_LEFT) {
-                    snake.setDirection(SnakeDirection::LEFT);
-                } else if(pressed & WPAD_BUTTON_RIGHT) {
-                    snake.setDirection(SnakeDirection::RIGHT);
-                }
-            }
-
-            screen.update(pressed);
+        WPAD_ScanPads();
+        u32 pressed = WPAD_ButtonsDown(0);
+        if (pressed & WPAD_BUTTON_HOME) {
+            exit(0);
         }
+        if(gameStarted) {
+            if(pressed & WPAD_BUTTON_UP) {
+                snake.setDirection(SnakeDirection::UP);
+            } else if(pressed & WPAD_BUTTON_DOWN) {
+                snake.setDirection(SnakeDirection::DOWN);
+            } else if(pressed & WPAD_BUTTON_LEFT) {
+                snake.setDirection(SnakeDirection::LEFT);
+            } else if(pressed & WPAD_BUTTON_RIGHT) {
+                snake.setDirection(SnakeDirection::RIGHT);
+            }
+        }
+
+        screen.update(pressed);
 
         if(gameStarted && timer % 5 == 0 && !dying) {
             if(!snake.moveForward()) {

@@ -15,7 +15,7 @@ class Button : public Text {
         Button(const std::string& initial, screen_pos startPos, bool visible = true,
             screen_pos dimensions = { 0, 0 }, Align alignment = Align::NONE);
         draw_info getUpdates();
-        bool setSelected(bool);
+        void setSelected(bool);
         void click();
 
         int m_updateMod = 0;

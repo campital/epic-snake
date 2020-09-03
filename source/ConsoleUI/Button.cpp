@@ -15,14 +15,15 @@ void Button::setCallback(const std::function<void()>& cb)
 bool Button::operator<(const Button& other) const
 {
     // 512 is arbitrary -- it gives the y value a greater weight
-    return (m_drawInfo.newStart.y * 512 + m_drawInfo.newStart.x < other.m_drawInfo.newStart.y * 512 + other.m_drawInfo.newStart.x);
+    return (m_drawInfo.newStart.y * 512 + m_drawInfo.newStart.x) <
+        (other.m_drawInfo.newStart.y * 512 + other.m_drawInfo.newStart.x);
 }
 
 draw_info Button::getUpdates()
 {
     if(m_selected && m_drawInfo.newVisible) {
         updateDrawInfo();
-        if(m_updateMod++ % 2 == 0) {
+        if(((m_updateMod++ / 5) % 2) == 0) {
             m_drawInfo.newBackgroundColor = Color::BLACK;
             m_drawInfo.newTextColor = Color::WHITE;
         } else {
@@ -33,18 +34,14 @@ draw_info Button::getUpdates()
     return Text::getUpdates();
 }
 
-bool Button::setSelected(bool selected)
+void Button::setSelected(bool selected)
 {
-    if(!m_drawInfo.newVisible) {
-        return false;
-    }
     if(!selected) {
         updateDrawInfo();
         m_drawInfo.newBackgroundColor = Color::BLACK;
         m_drawInfo.newTextColor = Color::WHITE;
     }
     m_selected = selected;
-    return true;
 }
 
 void Button::click()
