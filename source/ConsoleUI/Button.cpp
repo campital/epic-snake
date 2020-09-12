@@ -23,7 +23,7 @@ draw_info Button::getUpdates()
 {
     if(m_selected && m_drawInfo.newVisible) {
         updateDrawInfo();
-        if(((m_updateMod++ / 5) % 2) == 0) {
+        if(((m_updateMod++ / 10) % 2) == 0) {
             m_drawInfo.newBackgroundColor = Color::BLACK;
             m_drawInfo.newTextColor = Color::WHITE;
         } else {
@@ -46,9 +46,8 @@ void Button::setSelected(bool selected)
 
 void Button::click()
 {
-    if(m_callback && m_drawInfo.newVisible) {
+    if(m_callback && m_drawInfo.newVisible)
         m_callback();
-    }
 }
 
 }

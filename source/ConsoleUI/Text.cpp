@@ -24,20 +24,18 @@ std::string Text::text()
 void Text::move(screen_pos location, Align alignment)
 {
     updateDrawInfo();
-    if(alignment == Align::CENTER_H || alignment == Align::CENTER_ALL) {
+    if(alignment == Align::CENTER_H || alignment == Align::CENTER_ALL)
         location.x += m_dimensions.x / 2 - m_drawInfo.newData.size() / 2;
-    }
-    if(alignment == Align::CENTER_V || alignment == Align::CENTER_ALL) {
+
+    if(alignment == Align::CENTER_V || alignment == Align::CENTER_ALL)
         location.y += m_dimensions.y / 2 - 3;
-    }
     m_drawInfo.newStart = location;
 }
 
 void Text::setVisible(bool visible)
 {
-    if(visible != m_drawInfo.newVisible) {
+    if(visible != m_drawInfo.newVisible)
         updateDrawInfo();
-    }
     m_drawInfo.newVisible = visible;
 }
 
