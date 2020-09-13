@@ -1,4 +1,5 @@
 #include <iostream>
+#include <queue>
 #include <gccore.h>
 #include <wiiuse/wpad.h>
 #include <network.h>
@@ -24,6 +25,7 @@ int main(int argc, char **argv) {
     SnakeController snake(rows - 3, cols, [](unsigned int x, unsigned int y, char c) {
         printf("\033[%d;%dH%c", y + 2, x, c);
     });
+    std::queue<u32> snakeInputs;
     bool gameStarted = false;
     // startGame ensures that canvas doesn't clear snake
     bool startGame = false;
@@ -60,17 +62,8 @@ int main(int argc, char **argv) {
         if (pressed & WPAD_BUTTON_HOME)
             exit(0);
 
-        // TODO: queue input
-        if(gameStarted) {
-            if(pressed & WPAD_BUTTON_UP) {
-                snake.setDirection(SnakeDirection::UP);
-            } else if(pressed & WPAD_BUTTON_DOWN) {
-                snake.setDirection(SnakeDirection::DOWN);
-            } else if(pressed & WPAD_BUTTON_LEFT) {
-                snake.setDirection(SnakeDirection::LEFT);
-            } else if(pressed & WPAD_BUTTON_RIGHT) {
-                snake.setDirection(SnakeDirection::RIGHT);
-            }
+        if(gameStarted && (pressed & (WPAD_BUTTON_UP | WPAD_BUTTON_DOWN |WPAD_BUTTON_LEFT | WPAD_BUTTON_RIGHT))) {
+            snakeInputs.push(pressed);
         }
 
         if(startGame) {
@@ -83,6 +76,21 @@ int main(int argc, char **argv) {
         }
 
         if(gameStarted && timer % 5 == 0 && !dying) {
+            u32 in = 0;
+            if(!snakeInputs.empty()) {
+                in = snakeInputs.front();
+                snakeInputs.pop();
+            }
+
+            if(in & WPAD_BUTTON_UP) {
+                snake.setDirection(SnakeDirection::UP);
+            } else if(in & WPAD_BUTTON_DOWN) {
+                snake.setDirection(SnakeDirection::DOWN);
+            } else if(in & WPAD_BUTTON_LEFT) {
+                snake.setDirection(SnakeDirection::LEFT);
+            } else if(in & WPAD_BUTTON_RIGHT) {
+                snake.setDirection(SnakeDirection::RIGHT);
+            }
             if(!snake.moveForward()) {
                 dying = true;
                 gameStarted = false;
@@ -90,6 +98,7 @@ int main(int argc, char **argv) {
         } else if(dying && snake.getLength() > 0 && timer % 5 == 0) {
             snake.removeBack();
         } else if(dying && snake.getLength() < 1) {
+            std::queue<u32>().swap(snakeInputs);
             int scr = snake.reset();
             text_score->setText("So close! Score: " + std::to_string(scr));
             text_score->move({ cols - static_cast<int>(text_score->text().size()), 0 });
