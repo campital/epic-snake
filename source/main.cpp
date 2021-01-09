@@ -2,8 +2,8 @@
 #include <queue>
 #include <gccore.h>
 #include <wiiuse/wpad.h>
-#include <network.h>
 #include "SnakeController.h"
+#include "NetSnakeController.h"
 #include "ConsoleUI/Canvas.h"
 
 int main(int argc, char **argv) {
@@ -62,7 +62,7 @@ int main(int argc, char **argv) {
         if (pressed & WPAD_BUTTON_HOME)
             exit(0);
 
-        if(gameStarted && (pressed & (WPAD_BUTTON_UP | WPAD_BUTTON_DOWN |WPAD_BUTTON_LEFT | WPAD_BUTTON_RIGHT))) {
+        if(gameStarted && (pressed & (WPAD_BUTTON_UP | WPAD_BUTTON_DOWN | WPAD_BUTTON_LEFT | WPAD_BUTTON_RIGHT))) {
             snakeInputs.push(pressed);
         }
 
