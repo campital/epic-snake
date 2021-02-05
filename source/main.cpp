@@ -1,10 +1,12 @@
 #include <iostream>
 #include <queue>
 #include <gccore.h>
+#include <network.h>
 #include <wiiuse/wpad.h>
 #include "SnakeController.h"
 #include "NetSnakeController.h"
 #include "ConsoleUI/Canvas.h"
+#include "Protocol/Connection.h"
 
 int main(int argc, char **argv) {
     VIDEO_Init();
@@ -48,7 +50,16 @@ int main(int argc, char **argv) {
 
     auto screen_options = canvas.addScreen();
     auto btn_back = screen_options->addButton("Back", { cols - 5, rows - 4 });
+    auto text_online = screen_options->addText("Online: ", { -15, 0 }, true, ConsoleUI::Align::CENTER_ALL);
+    auto btn_online = screen_options->addButton("False", { -8, 0 }, true, std::function<void()>(), ConsoleUI::Align::CENTER_ALL);
+    bool online = false;
+    /*Protocol::Connection test;
+    if(!test.connect("192.168.0.1", 5554))
+        exit(EXIT_FAILURE);*/
 
+    btn_online->setCallback([&]() {
+        btn_online->setText((online = !online) ? "True" : "False");
+    });
     btn_options->setCallback([&]() {
             canvas.setScreen(screen_options);
     });
@@ -60,7 +71,7 @@ int main(int argc, char **argv) {
         WPAD_ScanPads();
         u32 pressed = WPAD_ButtonsDown(0);
         if (pressed & WPAD_BUTTON_HOME)
-            exit(0);
+            exit(EXIT_SUCCESS);
 
         if(gameStarted && (pressed & (WPAD_BUTTON_UP | WPAD_BUTTON_DOWN | WPAD_BUTTON_LEFT | WPAD_BUTTON_RIGHT))) {
             snakeInputs.push(pressed);
